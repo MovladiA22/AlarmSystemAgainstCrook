@@ -661,7 +661,7 @@ Transform:
   m_GameObject: {fileID: 849633056}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.106, y: 0.648, z: -5.027}
+  m_LocalPosition: {x: -0.808, y: 0.648, z: -3.712}
   m_LocalScale: {x: 0.48189864, y: 0.48189864, z: 0.48189864}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -967,7 +967,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _soundOfAlarm: {fileID: 1607930698}
-  _speedVolumeChange: 0.3
+  _speedVolumeChange: 0.2
 --- !u!82 &1607930698
 AudioSource:
   m_ObjectHideFlags: 0

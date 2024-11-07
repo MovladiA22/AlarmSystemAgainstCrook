@@ -7,55 +7,50 @@ public class Signaler : MonoBehaviour
     [SerializeField] private float _speedVolumeChange;
 
     private bool _isActive = false;
-    private Coroutine _onCoroutine;
-    private Coroutine _offCoroutine;
 
     private void OnTriggerEnter()
     {
         if (_isActive)
-            _offCoroutine = StartCoroutine(TurnOff());
+            TurnOff();
         else
-            _onCoroutine = StartCoroutine(TurnOn());
+            TurnOn();
     }
 
-    private IEnumerator TurnOn()
+    private void TurnOn()
     {
-        var wait = new WaitForSeconds(_speedVolumeChange);
-        float maxVolume = 1f;
-        float step = 0.1f;
-
-        if (_offCoroutine != null)
-            StopCoroutine(_offCoroutine);
-
         _soundOfAlarm.volume = 0f;
         _soundOfAlarm.Play();
-        _isActive = true;
 
-        for (float i = 0; i < maxVolume; i += step)
-        {
-            _soundOfAlarm.volume = i;
-
-            yield return wait;
-        }
+        StartCoroutine(ChangeVolume());
     }
 
-    private IEnumerator TurnOff()
+    private void TurnOff()
+    {
+        StartCoroutine(ChangeVolume());
+    }
+
+    private IEnumerator ChangeVolume()
     {
         var wait = new WaitForSeconds(_speedVolumeChange);
+        int additiveInverseNumber = _isActive ? -1 : 1;
         float maxVolume = 1f;
-        float step = 0.1f;
-
-        if (_onCoroutine != null)
-            StopCoroutine(_onCoroutine);
+        float step = 0.05f;
 
         for (float i = maxVolume; i >= 0; i -= step)
         {
-            _soundOfAlarm.volume = i;
+            _soundOfAlarm.volume += step * additiveInverseNumber;
 
             yield return wait;
         }
 
-        _soundOfAlarm.Stop();
-        _isActive = false;
+        if (_isActive)
+        {
+            _soundOfAlarm.Stop();
+            _isActive = false;
+        }
+        else
+        {
+            _isActive = true;
+        }
     }
 }
