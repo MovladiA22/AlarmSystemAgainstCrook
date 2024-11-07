@@ -5,27 +5,28 @@ public class Signaler : MonoBehaviour
 {
     [SerializeField] private AudioSource _soundOfAlarm;
     [SerializeField] private float _speedVolumeChange;
+    [SerializeField] private Door _door;
 
     private bool _isActive = false;
 
-    private void OnTriggerEnter()
+    private void OnEnable()
     {
-        if (_isActive)
-            TurnOff();
-        else
-            TurnOn();
+        _door.Entered += TurnOnOrOff; 
     }
 
-    private void TurnOn()
+    private void OnDisable()
     {
-        _soundOfAlarm.volume = 0f;
-        _soundOfAlarm.Play();
-
-        StartCoroutine(ChangeVolume());
+        _door.Entered -= TurnOnOrOff;
     }
 
-    private void TurnOff()
+    private void TurnOnOrOff()
     {
+        if (_isActive == false)
+        {
+            _soundOfAlarm.volume = 0f;
+            _soundOfAlarm.Play();
+        }
+
         StartCoroutine(ChangeVolume());
     }
 
