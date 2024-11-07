@@ -11,35 +11,36 @@ public class Signaler : MonoBehaviour
 
     private void OnEnable()
     {
-        _door.Entered += TurnOnOrOff; 
+        _door.Entered += ToggleAlarm; 
     }
 
     private void OnDisable()
     {
-        _door.Entered -= TurnOnOrOff;
+        _door.Entered -= ToggleAlarm;
     }
 
-    private void TurnOnOrOff()
+    private void ToggleAlarm()
     {
+        float targetVolume = 0f;
+
         if (_isActive == false)
         {
+            targetVolume = 1f;
             _soundOfAlarm.volume = 0f;
             _soundOfAlarm.Play();
         }
 
-        StartCoroutine(ChangeVolume());
+        StartCoroutine(ChangeVolume(targetVolume));
     }
 
-    private IEnumerator ChangeVolume()
+    private IEnumerator ChangeVolume(float targetVolume)
     {
         var wait = new WaitForSeconds(_speedVolumeChange);
-        int additiveInverseNumber = _isActive ? -1 : 1;
-        float maxVolume = 1f;
         float step = 0.05f;
 
-        for (float i = maxVolume; i >= 0; i -= step)
+        while (targetVolume != _soundOfAlarm.volume)
         {
-            _soundOfAlarm.volume += step * additiveInverseNumber;
+            _soundOfAlarm.volume = Mathf.MoveTowards( _soundOfAlarm.volume, targetVolume, step);
 
             yield return wait;
         }
