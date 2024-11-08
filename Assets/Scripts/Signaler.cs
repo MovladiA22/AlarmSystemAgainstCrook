@@ -5,35 +5,39 @@ public class Signaler : MonoBehaviour
 {
     [SerializeField] private AudioSource _soundOfAlarm;
     [SerializeField] private float _speedVolumeChange;
-    [SerializeField] private Door _door;
+    [SerializeField] private House _house;
 
-    private bool _isActive = false;
+    private float targetVolume;
 
     private void OnEnable()
     {
-        _door.Entered += ToggleAlarm; 
+        _house.Entered += TurnOn;
+        _house.Left += TurnOff;
     }
 
     private void OnDisable()
     {
-        _door.Entered -= ToggleAlarm;
+        _house.Entered -= TurnOn;
+        _house.Left -= TurnOff;
     }
 
-    private void ToggleAlarm()
+    private void TurnOn()
     {
-        float targetVolume = 0f;
+        _soundOfAlarm.volume = 0f;
+        targetVolume = 1f;
+        _soundOfAlarm.Play();
 
-        if (_isActive == false)
-        {
-            targetVolume = 1f;
-            _soundOfAlarm.volume = 0f;
-            _soundOfAlarm.Play();
-        }
-
-        StartCoroutine(ChangeVolume(targetVolume));
+        StartCoroutine(ChangeVolume());
     }
 
-    private IEnumerator ChangeVolume(float targetVolume)
+    private void TurnOff()
+    {
+        targetVolume = 0f;
+
+        StartCoroutine(ChangeVolume());
+    }
+
+    private IEnumerator ChangeVolume()
     {
         var wait = new WaitForSeconds(_speedVolumeChange);
         float step = 0.05f;
@@ -45,14 +49,7 @@ public class Signaler : MonoBehaviour
             yield return wait;
         }
 
-        if (_isActive)
-        {
+        if (targetVolume == 0f)
             _soundOfAlarm.Stop();
-            _isActive = false;
-        }
-        else
-        {
-            _isActive = true;
-        }
     }
 }
